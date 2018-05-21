@@ -1,0 +1,28 @@
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'java-library'
+
+group = 'hal.spring.amqp'
+version = '0.1.1'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                'Implementation-Version': project.version)
+    }
+}
+
+dependencies {
+    implementation group: 'org.springframework.amqp', name: 'spring-amqp', version: '2.0.3.RELEASE'
+    implementation('com.google.protobuf:protobuf-java:3.5.1')
+    implementation group: 'com.google.protobuf', name: 'protobuf-java-util', version: '3.5.1'
+    testImplementation 'junit:junit:4.12'
+}
