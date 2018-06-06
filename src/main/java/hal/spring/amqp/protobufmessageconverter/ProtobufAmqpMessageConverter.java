@@ -22,6 +22,7 @@ public class ProtobufAmqpMessageConverter implements MessageConverter {
         try {
             supported(object);
             com.google.protobuf.Message mes = (com.google.protobuf.Message) object;
+            messageProperties.getHeaders().put(HEADER, mes.getDescriptorForType().getFullName());
             return new Message(JsonFormat.printer().print(mes).getBytes(), messageProperties);
         } catch (Exception e) {
             throw new MessageConversionException(e.getMessage());
