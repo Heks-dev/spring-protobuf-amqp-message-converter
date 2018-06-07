@@ -7,6 +7,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.Heks-dev:spring-protobuf-amqp-message-converter:1.0.1'
+    compile 'com.github.Heks-dev:spring-protobuf-amqp-message-converter:1.0.1'
 }
 ```
