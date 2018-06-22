@@ -1,6 +1,8 @@
 package hal.spring.amqp.protobufmessageconverter;
 
 import com.google.protobuf.util.JsonFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.support.converter.MessageConversionException;
@@ -13,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ProtobufAmqpMessageConverter implements MessageConverter {
     private static final String HEADER = "X-Type";
-
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private static Map<Class<?>, Method> methodCache = new ConcurrentHashMap<>();
     private static Map<String, Class<?>> typeCache = new ConcurrentHashMap<>();
 
@@ -22,6 +24,7 @@ public class ProtobufAmqpMessageConverter implements MessageConverter {
         try {
             supported(object);
             com.google.protobuf.Message mes = (com.google.protobuf.Message) object;
+            logger.debug("Handled proto message with type: [{}]", mes.getDescriptorForType().getFullName());
             messageProperties.getHeaders().put(HEADER, mes.getDescriptorForType().getFullName());
             return new Message(JsonFormat.printer().print(mes).getBytes(), messageProperties);
         } catch (Exception e) {
@@ -38,6 +41,8 @@ public class ProtobufAmqpMessageConverter implements MessageConverter {
     @Override
     public Object fromMessage(Message message) throws MessageConversionException {
         try {
+            logger.debug("Trying to deserialize message with type: [{}]",
+                    message.getMessageProperties().getHeaders().get(HEADER));
             Class<?> clazz = getOrLoad(String.valueOf(message.getMessageProperties().getHeaders().get(HEADER)));
             supported(clazz);
             com.google.protobuf.Message.Builder builder = defineBuilder(clazz);
