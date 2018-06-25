@@ -53,10 +53,19 @@ group = 'hal.spring.amqp'
 version = '1.0.2'
 sourceCompatibility = 1.8
 
+bootJar.enabled = false
+jar.enabled = true
+
 repositories {
     mavenCentral()
 }
 
+jar {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                'Implementation-Version': project.version)
+    }
+}
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-amqp')
