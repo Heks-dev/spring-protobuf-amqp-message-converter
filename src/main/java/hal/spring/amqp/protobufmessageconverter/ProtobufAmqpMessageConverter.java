@@ -26,7 +26,9 @@ public class ProtobufAmqpMessageConverter implements MessageConverter {
             com.google.protobuf.Message mes = (com.google.protobuf.Message) object;
             logger.debug("Handled proto message with type: [{}]", mes.getDescriptorForType().getFullName());
             messageProperties.getHeaders().put(HEADER, mes.getDescriptorForType().getFullName());
-            return new Message(JsonFormat.printer().print(mes).getBytes(), messageProperties);
+            String json = JsonFormat.printer().print(mes);
+            logger.debug("Serialized body: {}", json);
+            return new Message(json.getBytes(), messageProperties);
         } catch (Exception e) {
             throw new MessageConversionException(e.getMessage());
         }
@@ -47,6 +49,7 @@ public class ProtobufAmqpMessageConverter implements MessageConverter {
             supported(clazz);
             com.google.protobuf.Message.Builder builder = defineBuilder(clazz);
             String json = new String(message.getBody(), "UTF-8");
+            logger.debug("Deserialized body: {}", json);
             JsonFormat.parser().merge(json, builder);
             return builder.build();
         } catch (Exception e) {
